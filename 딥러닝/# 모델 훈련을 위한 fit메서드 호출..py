@@ -1,0 +1,68 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow.keras import layers
+
+# 1. 모델 훈련을 위한 fit 메서드 호출
+model.fit(
+    x_train, 
+    y_train, 
+    batch_size=32,
+    epochs=10,
+    shuffle=True
+)
+
+
+# 2. 테스트 세트 모델 성능 평가하기
+model.evaluate(x_test, y_test)
+
+
+# 3. predict 메서드를 사용해 테스트 세트에 대한 예측 만들기
+CLASSES = np.array([
+    'airplane', 'automobile', 'bird', 'cat', 'deer', 
+    'dog', 'frog', 'horse', 'ship', 'truck'
+])
+
+preds = model.predict(x_test)
+preds_single = CLASSES[np.argmax(preds, axis=-1)]
+
+actual_single = CLASSES[np.argmax(y_test, axis=-1)]
+
+
+# 4. MLP의 예측과 실제 레이블 시각화하여 출력하기
+import matplotlib.pyplot as plt
+
+n_to_show = 10
+indices = np.random.choice(range(len(x_test)), n_to_show)
+
+fig = plt.figure(figsize=(15, 3))
+fig.subplots_adjust(hspace=0.4, wspace=0.4)
+
+for i, idx in enumerate(indices):
+    img = x_test[idx]
+    ax = fig.add_subplot(1, n_to_show, i + 1)
+    ax.axis('off')
+    
+    # 오타 수정: ax.test -> ax.text
+    ax.text(
+        0.5, -0.35, 'pred = ' + str(preds_single[idx]), fontsize=10,
+        ha='center', transform=ax.transAxes
+    )
+    ax.text(
+        0.5, -0.7, 'act = ' + str(actual_single[idx]), fontsize=10,
+        ha='center', transform=ax.transAxes
+    )
+    ax.imshow(img)
+
+plt.show()
+
+
+# 5. 흑백 이미지 입력을 적용한 Conv2D 층 예시
+from tensorflow.keras import layers
+
+input_layer = layers.Input(shape=(64, 64, 1))
+conv_layer_1 = layers.Conv2D(
+    filters=2,
+    kernel_size=(3, 3),
+    strides=1,
+    padding="same"
+)(input_layer)
